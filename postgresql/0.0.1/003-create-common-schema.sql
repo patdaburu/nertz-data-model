@@ -8,6 +8,25 @@ CREATE SCHEMA db
 COMMENT ON SCHEMA db
   IS 'This schema contains common database objects.';
 
+-- DROP TABLE db.version;
+CREATE TABLE db.version
+(
+  part character varying(16) PRIMARY KEY NOT NULL,
+  number INTEGER NOT NULL
+)
+WITH (
+  OIDS = FALSE
+)
+;
+COMMENT ON COLUMN db.version.part IS 'is the version number part (major, minor, revision, or build)';
+COMMENT ON COLUMN db.version.number IS 'is the number of the version number part';
+-- TODO: Create a function to set and retrieve the version.
+-- TODO: LImit write access to the version table.
+INSERT INTO db.version(part, number) VALUES('major', 0);
+INSERT INTO db.version(part, number) VALUES('minor', 0);
+INSERT INTO db.version(part, number) VALUES('revision', 0);
+INSERT INTO db.version(part, number) VALUES('build', 0);
+
 
 -- DROP TABLE db.entities;
 
@@ -23,10 +42,11 @@ WITH (
   OIDS = FALSE
 )
 ;
-COMMENT ON COLUMN db.entities.created_by IS 'the identifier of the User that created the record';
-COMMENT ON COLUMN db.entities.created_at IS 'a timestamp that indicates when the record was created';
-COMMENT ON COLUMN db.entities.last_updated_at IS 'a timestamp that indicates when the record was last updated';
-COMMENT ON COLUMN db.entities.last_updated_by IS 'the identifier of the User that last updated the record';
+COMMENT ON COLUMN db.entities.id IS 'uniquely defines the entity';
+COMMENT ON COLUMN db.entities.created_by IS 'is the identifier of the User that created the record';
+COMMENT ON COLUMN db.entities.created_at IS 'is a timestamp that indicates when the record was created';
+COMMENT ON COLUMN db.entities.last_updated_at IS 'is a timestamp that indicates when the record was last updated';
+COMMENT ON COLUMN db.entities.last_updated_by IS 'identifies the User that last updated the record';
 COMMENT ON TABLE db.entities
   IS 'common parent for entity tables; it defines instantaneous information about row status, creation and updates';
 
@@ -76,9 +96,9 @@ CREATE TABLE db.sys_users
    id uuid PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
    friendly_id character varying(16) NOT NULL,
    friendly_id_origin character varying(8) NOT NULL 
-	REFERENCES db.friendly_user_id_origins(code) 
-	ON DELETE RESTRICT 
-	ON UPDATE CASCADE,
+    REFERENCES db.friendly_user_id_origins(code)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
    person_id uuid NOT NULL, -- The People relation has not yet been created.
    CONSTRAINT sys_users__friendly_id_and_friendly_id_origin__unique UNIQUE(friendly_id, friendly_id_origin)
 ) INHERITS (db.entities)
@@ -86,7 +106,7 @@ WITH (
   OIDS = FALSE
 ) 
 ;
-COMMENT ON COLUMN db.sys_users.id IS 'defines Users defined within the system';
+COMMENT ON COLUMN db.sys_users.id IS 'uniquely identifies System Users';
 COMMENT ON COLUMN db.sys_users.friendly_id IS 'is a friendly (i.e. recognizable to a human) user id';
 COMMENT ON COLUMN db.sys_users.friendly_id_origin IS 'identifies the system of origin of the friendly id';
 COMMENT ON COLUMN db.sys_users.person_id IS 'is the id of the Person associated with the User';

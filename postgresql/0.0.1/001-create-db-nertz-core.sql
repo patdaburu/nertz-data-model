@@ -1,8 +1,8 @@
-﻿-- Database: "nertz-core"
+﻿-- Database: nertz_core
 
--- DROP DATABASE "nertz-core";
+-- DROP DATABASE "nertz_core";
 
-CREATE DATABASE "nertz-core"
+CREATE DATABASE nertz_core
   WITH OWNER = postgres
        ENCODING = 'UTF8'
        TABLESPACE = pg_default
@@ -10,5 +10,5 @@ CREATE DATABASE "nertz-core"
        LC_CTYPE = 'en_US.UTF-8'
        CONNECTION LIMIT = -1;
 
-COMMENT ON DATABASE "nertz-core"
+COMMENT ON DATABASE nertz_core
   IS 'This is the core Nertz database.';
