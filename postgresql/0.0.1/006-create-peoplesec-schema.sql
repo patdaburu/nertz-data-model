@@ -13,7 +13,8 @@ COMMENT ON SCHEMA peoplesec
 
 CREATE TABLE peoplesec.personal_secrets
 (
-  token   UUID PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4()
+  token   UUID PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4(),
+  date_of_birth DATE NOT NULL
 )
   INHERITS (db.entities)
 WITH (
