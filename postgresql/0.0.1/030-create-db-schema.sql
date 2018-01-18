@@ -43,7 +43,6 @@ WITH (
   OIDS = FALSE
 )
 ;
-COMMENT ON COLUMN db.entities.id IS 'uniquely defines the entity';
 COMMENT ON COLUMN db.entities.created_by IS 'is the identifier of the User that created the record';
 COMMENT ON COLUMN db.entities.created_at IS 'is a timestamp that indicates when the record was created';
 COMMENT ON COLUMN db.entities.last_updated_at IS 'is a timestamp that indicates when the record was last updated';

@@ -82,7 +82,7 @@ COMMENT ON COLUMN postaddr.postal_addresses.street_address IS
 COMMENT ON TABLE postaddr.postal_addresses IS
   'contains postal addresses';
 
-/**
+
 -- DROP TABLE postaddr.people_postal_addresses;
 
 CREATE TABLE postaddr.people_postal_addresses
@@ -99,7 +99,10 @@ CREATE TABLE postaddr.people_postal_addresses
   postal_address_application CHARACTER VARYING(8) NOT NULL
     REFERENCES postaddr.postal_address_applications (code)
     ON DELETE RESTRICT
-    ON UPDATE CASCADE
+    ON UPDATE CASCADE,
+  -- A person may not have the same address for the same purpose registered multiple times.
+  CONSTRAINT people_postal_addresses_person_postal_address_postal_address_application
+    UNIQUE(person, postal_address, postal_address_application)
 )
   INHERITS (db.entities)
 WITH (
@@ -109,13 +112,73 @@ COMMENT ON COLUMN postaddr.people_postal_addresses.id IS
 'uniquely identifies the entry';
 COMMENT ON COLUMN postaddr.people_postal_addresses.person IS
 'identifies the person';
-COMMENT ON COLUMN postaddr.people_postal_addresses.address_type IS
-'indicates the general address type';
-COMMENT ON COLUMN postaddr.people_postal_addresses.street_address IS
-'contains the token for the street address';
+COMMENT ON COLUMN postaddr.people_postal_addresses.postal_address IS
+'identifies the postal address';
+COMMENT ON COLUMN postaddr.people_postal_addresses.postal_address_application IS
+'indicates the postal address application';
 COMMENT ON TABLE postaddr.people_postal_addresses IS
   'relates people to postal addresses';
-*/
+
+-- DROP TABLE postaddr.people_postal_addresses_preferences;
+
+CREATE TABLE postaddr.people_postal_addresses_preferences
+(
+   person_postal_address UUID UNIQUE NOT NULL
+     REFERENCES postaddr.people_postal_addresses(id)
+       ON DELETE CASCADE
+       ON UPDATE CASCADE,
+   preferred_as_of TIMESTAMP WITH TIME ZONE DEFAULT now()
+)
+WITH (
+  OIDS = FALSE
+);
+COMMENT ON COLUMN postaddr.people_postal_addresses_preferences.person_postal_address IS
+'is the identifier of the person address relationship';
+COMMENT ON COLUMN postaddr.people_postal_addresses_preferences.preferred_as_of IS
+  'is the timestamp marking when the entry was preferred';
+COMMENT ON TABLE postaddr.people_postal_addresses_preferences
+  IS 'establishes the preferences of postal addresses for people';
+
+
+-- DROP TABLE postaddr.people_postal_addresses_seasons;
+
+CREATE TABLE postaddr.people_postal_addresses_seasons
+(
+  person_postal_address UUID UNIQUE NOT NULL
+    REFERENCES postaddr.people_postal_addresses (id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  from_month            INTEGER     NOT NULL CHECK (from_month BETWEEN 1 AND 12)
+    REFERENCES db.months (ordinal)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+  from_day              INTEGER     NOT NULL CHECK (from_day BETWEEN 1 and 31),
+  to_month              INTEGER     NOT NULL CHECK (from_month BETWEEN 1 AND 12)
+    REFERENCES db.months (ordinal)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+  to_day                INTEGER     NOT NULL CHECK (from_day BETWEEN 1 and 31)
+)
+WITH (
+OIDS = FALSE
+);
+COMMENT ON COLUMN postaddr.people_postal_addresses_seasons.person_postal_address IS
+'is the identifier of the person address relationship';
+COMMENT ON COLUMN postaddr.people_postal_addresses_seasons.from_month IS
+'is the ordinal of the month at the beginning of the season (a whole number between 1 and 12)';
+COMMENT ON COLUMN postaddr.people_postal_addresses_seasons.from_day IS
+'is the day of the month at the beginning of the season (a whole number between 1 and 31)';
+COMMENT ON COLUMN postaddr.people_postal_addresses_seasons.to_month IS
+'is the ordinal of the month at the end of the season (a whole number between 1 and 12)';
+COMMENT ON COLUMN postaddr.people_postal_addresses_seasons.to_day IS
+'is the day of the month at the end of the season (a whole number between 1 and 31)';
+COMMENT ON TABLE postaddr.people_postal_addresses_seasons
+IS 'specifies a period of the year in which an address may be used';
+
+
+
+
+
 
 
 
