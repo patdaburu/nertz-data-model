@@ -76,11 +76,11 @@ CREATE TABLE peoplesec.personal_names_nicknames
 WITH (
 OIDS = FALSE
 );
-COMMENT ON COLUMN peoplesec.personal_names_preferences.personal_name IS 'is the identifier of the personal name';
-COMMENT ON COLUMN peoplesec.personal_names_preferences.preferred_as_of IS
-'is the timestamp marking when the entry was preferred';
-COMMENT ON TABLE peoplesec.personal_names_preferences
-IS 'establishes the preferences of personal names';
+COMMENT ON COLUMN peoplesec.personal_names_nicknames.personal_name IS 'is the identifier of the personal name';
+COMMENT ON COLUMN peoplesec.personal_names_nicknames.nickname IS
+'is the nickname';
+COMMENT ON TABLE peoplesec.personal_names_nicknames
+IS 'relates personal names to nicknames';
 
 
 -- DROP TABLE peoplesec.personal_names_preferences;

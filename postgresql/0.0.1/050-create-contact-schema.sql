@@ -58,7 +58,7 @@ OIDS = FALSE
 COMMENT ON COLUMN contact.social_media.code IS 'is the code that identifies the social media outlet';
 COMMENT ON COLUMN contact.social_media.short_description IS 'briefly describes the social media outlet';
 COMMENT ON COLUMN contact.social_media.long_description IS 'goes into greater detail about the social media outlet';
-COMMENT ON TABLE contact.telno_types IS
+COMMENT ON TABLE contact.social_media IS
     'contains information about supported social media outlets';
 -- TODO: Add seed data.
 
