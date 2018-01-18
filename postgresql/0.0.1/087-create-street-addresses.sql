@@ -24,7 +24,11 @@ CREATE TABLE postaddrsec.street_addresses_locations
   REFERENCES  postaddrsec.street_addresses(token)
   ON DELETE CASCADE
   ON UPDATE CASCADE,
-  location geography NOT NULL
+  location geography NOT NULL,
+  location_provider CHARACTER VARYING(64)
+  REFERENCES gis.gis_providers(code)
+  ON DELETE RESTRICT
+  ON UPDATE CASCADE
 )
 WITH (
 OIDS = FALSE
@@ -33,6 +37,8 @@ COMMENT ON COLUMN postaddrsec.street_addresses_locations.street_address IS
 'identifies the street address';
 COMMENT ON COLUMN postaddrsec.street_addresses_locations.location IS
 'is the physical location';
+COMMENT ON COLUMN postaddrsec.street_addresses_locations.location_provider IS
+'identifies the provider of the location information';
 COMMENT ON TABLE postaddrsec.street_addresses_locations IS
   'relates physical locations to the addresses that have them.';
 

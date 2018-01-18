@@ -9,6 +9,7 @@ COMMENT ON SCHEMA db
   IS 'This schema contains common database objects.';
 
 -- DROP TABLE db.version;
+
 CREATE TABLE db.version
 (
   part character varying(16) PRIMARY KEY NOT NULL,

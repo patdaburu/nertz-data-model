@@ -1,4 +1,4 @@
-﻿-- Database: nertz_core
+-- Database: nertz_core
 
 -- DROP DATABASE "nertz_core";
 
