@@ -21,13 +21,58 @@ WITH (
 ;
 COMMENT ON COLUMN db.version.part IS 'is the version number part (major, minor, revision, or build)';
 COMMENT ON COLUMN db.version.number IS 'is the number of the version number part';
--- TODO: Create a function to set and retrieve the version.
--- TODO: LImit write access to the version table.
+-- SEED DATA:
 INSERT INTO db.version(part, number) VALUES('major', 0);
 INSERT INTO db.version(part, number) VALUES('minor', 0);
-INSERT INTO db.version(part, number) VALUES('revision', 0);
+INSERT INTO db.version(part, number) VALUES('patch', 0);
 INSERT INTO db.version(part, number) VALUES('build', 0);
 
+-- TODO: Limit write access to the version table.
+
+-- DROP FUNCTION db.get_version();
+
+CREATE OR REPLACE FUNCTION db.get_version()
+  RETURNS TABLE(major INTEGER, minor INTEGER, patch INTEGER, build INTEGER)
+AS $$
+  SELECT
+    MAX(number) FILTER(WHERE part='major') AS major,
+    MAX(number) FILTER(WHERE part='minor') AS minor,
+    MAX(number) FILTER(WHERE part='patch') AS patch,
+    MAX(number) FILTER(WHERE part='build') AS build
+  FROM db.version;
+$$
+LANGUAGE SQL;
+COMMENT ON FUNCTION  db.get_version() IS
+'retrieves the current version of the database';
+
+/*
+DROP FUNCTION db.set_version(
+  major INTEGER,
+  minor INTEGER,
+  patch INTEGER,
+  build INTEGER);
+*/
+
+CREATE OR REPLACE FUNCTION db.set_version(
+  major INTEGER,
+  minor INTEGER,
+  patch INTEGER,
+  build INTEGER)
+  RETURNS TABLE(major INTEGER, minor INTEGER, patch INTEGER, build INTEGER)
+AS $$
+  UPDATE db.version SET number=major WHERE part='major';
+  UPDATE db.version SET number=minor WHERE part='minor';
+  UPDATE db.version SET number=patch WHERE part='patch';
+  UPDATE db.version SET number=build WHERE part='build';
+  SELECT * FROM db.get_version();
+$$
+LANGUAGE SQL;
+COMMENT ON FUNCTION  db.set_version(
+  major INTEGER,
+  minor INTEGER,
+  patch INTEGER,
+  build INTEGER) IS
+'set the current version of the database';
 
 -- DROP TABLE db.entities;
 
